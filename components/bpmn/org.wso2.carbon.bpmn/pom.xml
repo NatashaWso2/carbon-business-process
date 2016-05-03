@@ -30,6 +30,17 @@
     <name>WSO2 Carbon - BPMN Core Component</name>
     <url>http://wso2.org</url>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
 
@@ -97,6 +108,7 @@
     </dependencies>
 
     <properties>
+        <checkstyle.skip>true</checkstyle.skip>
         <private.package>org.wso2.carbon.bpmn.core.internal</private.package>
         <export.package>
             !org.wso2.carbon.bpmn.core.internal,
@@ -107,6 +119,7 @@
         </export.package>
         <import.package>
             org.osgi.framework; version="[1.8.0, 2.0.0)",
+            <!--org.wso2.carbon.deployment; version="[5.0.0, 6.0.0)",-->
             <!--org.wso2.carbon.kernel.deployment; version="[5.0.0, 6.0.0)",-->
             org.slf4j; version="[1.7.7, 2.0.0)"
         </import.package>

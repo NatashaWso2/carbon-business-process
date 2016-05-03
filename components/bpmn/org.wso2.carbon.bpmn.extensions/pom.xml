@@ -25,6 +25,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>org.wso2.carbon.bpmn.extensions</artifactId>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>
@@ -93,7 +104,37 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
         </dependency>
+        <!-- What I added -->
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <!-- Jetty is needed if you're are not using the CXFServlet -->
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http-jetty</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <version>1.6.3</version>
+        </dependency>
 
     </dependencies>
+    <properties>
+        <cxf.version>3.1.6</cxf.version>
+        <checkstyle.skip>true</checkstyle.skip>
+        <export.package>
 
+            org.wso2.carbon.bpmn.extensions.*;
+            version=${carbon.business-process.exp.pkg.version},
+        </export.package>
+    </properties>
 </project>
