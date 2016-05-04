@@ -25,6 +25,9 @@ import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 import org.apache.cxf.service.model.ServiceInfo;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,32 +48,41 @@ import java.io.ByteArrayOutputStream;
 import java.net.URL;
 
 /**
- * Provides SOAP service invocation support within BPMN processes. It invokes the SOAP service/operation specified
- * by "operation" of the given "wsdl".
- * <p/>
- * Input payload/request body can be provided using the "request" parameter. The entire SOAP request message
- * has to be provided.
- * <p/>
- * <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:unit="http://ode/bpel/unit-test.wsdl">
- * " +
- * "   <soapenv:Header/>\n" +
- * "   <soapenv:Body>\n" +
- * "      <unit:hello>\n" +
- * "         <TestPart>Hello</TestPart>\n" +
- * "      </unit:hello>\n" +
- * "   </soapenv:Body>\n" +
- * "</soapenv:Envelope>
- * <p/>
- * Output received from the SOAP service will be assigned to a process variable (as raw content)
- * or parts of the output can be mapped to different process variables.
- * The response type i.e. the name of the output to be assigned/mapped to the response variable of the SOAP response message
- * has to be provided in "responseType".
- * <p/>
- * helloResponse.TestPart
- * <p/>
- * If a failure occurs in WebService task, a BPMN error with error code "WebServiceInvokeError" will
- * be thrown. BPMN process can catch this error using an Error Boundary Event associated
- * with the SOAP service task.
+ Provides SOAP service invocation support within BPMN processes.
+ The WebService task which is implemented as a BPMN extension to the Service task invokes the SOAP web service given by
+ “serviceURL” parameter. "serviceURL" parameter can be used to give a URL of a SOAP service endpoint.
+ It invokes the operation of the invoked web service given by the “method” parameter.
+ The input/request payload can be provided using the "input" parameter.
+ Output received  from the SOAP service invocation will be assigned to a process variable (as raw content) or parts of the output can be mapped to different process variables.
+ The parameters that should be specified by the user :
+ - serviceURL : URL of a SOAP service endpoint
+ - method : method to be invoked
+ - input : request payload
+ - outputVariable : process variable to save the response
+ The response of the SOAP service invocation can be retrieved from the variable specified above in the succession steps of the workflow. The class name of the Soap client implemented as an extension is given as the class
+ name to the Service task i.e.  "org.wso2.carbon.bpmn.extensions.soap.WebServiceTask".
+ Given below is an example on how the parameters are specified in the WebService task:
+     <serviceTask id="servicetask1" name="Service Task" activiti:class="org.wso2.carbon.bpmn.extensions.soap.WebServiceTask">
+     <extensionElements>
+     <activiti:field name="serviceURL">
+     <activiti:expression><![CDATA[${serviceURL}]]></activiti:expression>
+     </activiti:field>
+     <activiti:field name="method">
+     <activiti:expression><![CDATA[${method}]]></activiti:expression>
+     </activiti:field>
+     <activiti:field name="input">
+     <activiti:expression><![CDATA[${input}]]></activiti:expression>
+     </activiti:field>
+     <activiti:field name="outputVariable">
+     <activiti:string><![CDATA[outputVariable]]></activiti:string>
+     </activiti:field>
+     </extensionElements>
+     </serviceTask>
+ From the parameters specified by the user, the “serviceURL”, “method” and “input” are given as JuelExpressions i.e. the values for those variables are passed as expressions since they can have dynamic values.
+     <activiti:field name="serviceURL">
+     <activiti:expression><![CDATA[${serviceURL}]]></activiti:expression>
+     </activiti:field>
+ “outputVariable” is a fixed value since it contains the response of the SOAP service invocation.
  */
 public class WebServiceTask implements JavaDelegate {
 
@@ -84,12 +96,33 @@ public class WebServiceTask implements JavaDelegate {
     @Override
     public void execute(DelegateExecution execution) {
 
+        if (log.isDebugEnabled()) {
+            log.debug("Executing WebServiceTask " + serviceURL.getValue(execution).toString() + " - " + method.getValue(execution).toString());
+        }
+
+        String endpointURL = null;
+        String methodName = null;
+        String request = null;
+
         try {
-
-            String endpointURL = serviceURL.getValue(execution).toString();
-            String methodName = method.getValue(execution).toString();
-            String request = input.getValue(execution).toString();
-
+            if (serviceURL != null) {
+                endpointURL = serviceURL.getValue(execution).toString();
+            } else {
+                String urlNotFoundErrorMsg = "Service URL is not provided. serviceURL must be provided.";
+                throw new BPMNSOAPException(urlNotFoundErrorMsg);
+            }
+            if (method != null) {
+                methodName = method.getValue(execution).toString();
+            } else {
+                String methodNotFoundErrorMsg = "Method name that should be invoked is not provided. method must be provided.";
+                throw new BPMNSOAPException(methodNotFoundErrorMsg);
+            }
+            if (input != null) {
+                request = input.getValue(execution).toString();
+            } else {
+                String inputNotFoundErrorMsg = "Service URL is not provided. serviceURL must be provided.";
+                throw new BPMNSOAPException(inputNotFoundErrorMsg);
+            }
             /**
              *  Create the JaxWsDynamicClientFactory to walk through the CXF service model
              *  i.e. wsdl
@@ -139,9 +172,16 @@ public class WebServiceTask implements JavaDelegate {
                  *  Write out the response content to string.
                  */
                 String responseStr = new String(baos.toByteArray());
-                String outVarName = outputVariable.getValue(execution).toString();
-                execution.setVariable(outVarName, responseStr);
-                System.out.println(responseStr);
+
+                if (outputVariable != null) {
+                    String outVarName = outputVariable.getValue(execution).toString();
+                    execution.setVariable(outVarName, responseStr);
+                    System.out.println("XML -- >  " + responseStr);
+                } else {
+                    String outputNotFoundErrorMsg = "Output variable is not provided. outputVariable must be provided to save " +
+                            "the response.";
+                    throw new BPMNSOAPException(outputNotFoundErrorMsg);
+                }
 
             } catch (TransformerConfigurationException e) {
                 String transfomerConfigEx = "Configuration error";
@@ -154,9 +194,10 @@ public class WebServiceTask implements JavaDelegate {
                 String transformerEx = "Exception during the transformation process";
                 throw new BPMNSOAPException(transformerEx);
             }
+
         } catch (Exception e) {
             String msg = "Exception occured when walking through the CXF service model." +
-                    " Cause for the exception : "  +e.getMessage();
+                    " Cause for the exception : " + e.getMessage();
             log.error(msg, e);
 
         }
