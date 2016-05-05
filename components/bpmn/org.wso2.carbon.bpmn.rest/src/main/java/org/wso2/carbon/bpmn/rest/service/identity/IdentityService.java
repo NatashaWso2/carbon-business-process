@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.bpmn.core.BPMNEngineService;
 import org.wso2.carbon.bpmn.rest.common.RestResponseFactory;
-import org.wso2.carbon.bpmn.rest.common.utils.BPMNOSGIService;
+import org.wso2.carbon.bpmn.rest.internal.BPMNOSGIService;
 import org.wso2.carbon.bpmn.rest.common.utils.Utils;
 import org.wso2.carbon.bpmn.rest.model.common.DataResponse;
 import org.wso2.carbon.bpmn.rest.model.identity.GroupPaginateList;
@@ -130,50 +130,50 @@ public class IdentityService extends BaseIdentityService implements Microservice
 
         Map<String, String> allRequestParams = new HashMap<>();
         QueryStringDecoder decoder = new QueryStringDecoder(request.getUri());
-
-        if (decoder.parameters().containsKey("id")) {
-            String id = decoder.parameters().get("id").get(0);
-            if (id != null) {
-                query.groupId(id);
-                allRequestParams.put("id", id);
+        if (decoder.parameters().size() > 0) {
+            if (decoder.parameters().containsKey("id")) {
+                String id = decoder.parameters().get("id").get(0);
+                if (id != null) {
+                    query.groupId(id);
+                    allRequestParams.put("id", id);
+                }
+            }
+            if (decoder.parameters().containsKey("name")) {
+                String name = decoder.parameters().get("name").get(0);
+                if (name != null) {
+                    query.groupName(name);
+                    allRequestParams.put("name", name);
+                }
+            }
+            if (decoder.parameters().containsKey("nameLike")) {
+                String nameLike = decoder.parameters().get("nameLike").get(0);
+                if (nameLike != null) {
+                    query.groupNameLike(nameLike);
+                    allRequestParams.put("nameLike", nameLike);
+                }
+            }
+            if (decoder.parameters().containsKey("type")) {
+                String type = decoder.parameters().get("type").get(0);
+                if (type != null) {
+                    query.groupType(type);
+                    allRequestParams.put("type", type);
+                }
+            }
+            if (decoder.parameters().containsKey("name")) {
+                String member = decoder.parameters().get("name").get(0);
+                if (member != null) {
+                    query.groupMember(member);
+                    allRequestParams.put("member", member);
+                }
+            }
+            if (decoder.parameters().containsKey("potentialStarter")) {
+                String potentialStarter = decoder.parameters().get("potentialStarter").get(0);
+                if (potentialStarter != null) {
+                    query.potentialStarter(potentialStarter);
+                    allRequestParams.put("potentialStarter", potentialStarter);
+                }
             }
         }
-        if (decoder.parameters().containsKey("name")) {
-            String name = decoder.parameters().get("name").get(0);
-            if (name != null) {
-                query.groupName(name);
-                allRequestParams.put("name", name);
-            }
-        }
-        if (decoder.parameters().containsKey("nameLike")) {
-            String nameLike = decoder.parameters().get("nameLike").get(0);
-            if (nameLike != null) {
-                query.groupNameLike(nameLike);
-                allRequestParams.put("nameLike", nameLike);
-            }
-        }
-        if (decoder.parameters().containsKey("type")) {
-            String type = decoder.parameters().get("type").get(0);
-            if (type != null) {
-                query.groupType(type);
-                allRequestParams.put("type", type);
-            }
-        }
-        if (decoder.parameters().containsKey("name")) {
-            String member = decoder.parameters().get("name").get(0);
-            if (member != null) {
-                query.groupMember(member);
-                allRequestParams.put("member", member);
-            }
-        }
-        if (decoder.parameters().containsKey("potentialStarter")) {
-            String potentialStarter = decoder.parameters().get("potentialStarter").get(0);
-            if (potentialStarter != null) {
-                query.potentialStarter(potentialStarter);
-                allRequestParams.put("potentialStarter", potentialStarter);
-            }
-        }
-
         allRequestParams = Utils.prepareCommonParameters(allRequestParams, decoder.parameters());
 
         GroupPaginateList groupPaginateList =

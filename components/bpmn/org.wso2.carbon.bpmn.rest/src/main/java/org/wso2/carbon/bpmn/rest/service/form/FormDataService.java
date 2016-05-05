@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.bpmn.core.BPMNEngineService;
 import org.wso2.carbon.bpmn.rest.common.RestResponseFactory;
-import org.wso2.carbon.bpmn.rest.common.utils.BPMNOSGIService;
+import org.wso2.carbon.bpmn.rest.internal.BPMNOSGIService;
 import org.wso2.carbon.bpmn.rest.model.form.RestFormProperty;
 import org.wso2.carbon.bpmn.rest.model.form.SubmitFormRequest;
 import org.wso2.carbon.bpmn.rest.model.runtime.ProcessInstanceResponse;
@@ -96,8 +96,7 @@ public class FormDataService implements Microservice {
     public Response getFormData(@Context Request request, @QueryParam("taskId") String taskId,
                                 @QueryParam("processDefinitionId") String processDefinitionId) {
 
-        if (taskId == null && processDefinitionId == null) {
-            throw new ActivitiIllegalArgumentException(
+        if (taskId == null && processDefinitionId == null) {throw new ActivitiIllegalArgumentException(
                     "The taskId or processDefinitionId parameter has to be provided");
         }
 
