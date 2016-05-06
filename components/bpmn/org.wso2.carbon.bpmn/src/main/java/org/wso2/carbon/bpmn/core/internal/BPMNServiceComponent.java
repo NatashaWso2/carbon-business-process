@@ -44,6 +44,7 @@ import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.datasource.core.exception.DataSourceException;
 import org.wso2.carbon.deployment.engine.Artifact;
 import org.wso2.carbon.deployment.engine.ArtifactType;
+import org.wso2.carbon.security.caas.user.core.service.RealmService;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -69,6 +70,23 @@ public class BPMNServiceComponent {
     private DataSourceManagementService datasourceManagementService;
     private JNDIContextManager jndiContextManager;
     private BundleContext bundleContext;
+
+  //  Set CarbonRealmService
+    @Reference(
+            name = "org.wso2.carbon.security.CarbonRealmServiceImpl",
+            service = RealmService.class,
+            cardinality = ReferenceCardinality.AT_LEAST_ONE,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unregisterCarbonRealm"
+    )
+    public void registerCarbonRealm(RealmService carbonRealmService) {
+        log.info("register CarbonRealmService...");
+        IdentityDataHolder.getInstance().registerCarbonRealmService(carbonRealmService);
+    }
+
+    public void unregisterCarbonRealm(RealmService carbonRealmService) {
+        log.info("Unregister CarbonRealmService...");
+    }
 
     @Reference(
             name = "org.wso2.carbon.datasource.jndi.JNDIContextManager",
@@ -130,6 +148,7 @@ public class BPMNServiceComponent {
             BPMNEngineServiceImpl bpmnEngineService = new BPMNEngineServiceImpl();
             bpmnEngineService
                     .setProcessEngine(ActivitiEngineBuilder.getInstance().getProcessEngine());
+            bpmnEngineService.setCarbonRealmService(IdentityDataHolder.getInstance().getCarbonRealmService());
             bundleContext
                     .registerService(BPMNEngineService.class.getName(), bpmnEngineService, null);
             // Create metadata table for deployments
