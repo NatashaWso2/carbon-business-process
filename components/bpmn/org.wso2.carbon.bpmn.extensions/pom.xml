@@ -25,17 +25,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>org.wso2.carbon.bpmn.extensions</artifactId>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <name>WSO2 Carbon - BPMN Extensions Component</name>
 
     <dependencies>
         <dependency>
@@ -83,7 +73,7 @@
             <artifactId>org.osgi.core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.osgi</groupId>
+            <groupId>org.wso2.eclipse.osgi</groupId>
             <artifactId>org.eclipse.osgi</artifactId>
         </dependency>
 

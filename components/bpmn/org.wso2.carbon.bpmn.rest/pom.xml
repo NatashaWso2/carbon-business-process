@@ -85,7 +85,7 @@
             <artifactId>msf4j-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.osgi</groupId>
+            <groupId>org.wso2.eclipse.osgi</groupId>
             <artifactId>org.eclipse.osgi</artifactId>
         </dependency>
 
@@ -115,7 +115,7 @@
     </dependencies>
 
     <properties>
-        <checkstyle.skip>true</checkstyle.skip>
+        <checkstyle.skip>false</checkstyle.skip>
         <private.package>org.wso2.carbon.bpmn.rest.internal</private.package>
         <export.package>
             org.wso2.carbon.bpmn.rest.*;version=${carbon.business-process.exp.pkg.version},
@@ -130,6 +130,9 @@
             javax.xml.stream.*
         </import.package>
         <dynamic.import.package>*</dynamic.import.package>
+        <carbon.component>osgi.service;objectClass="org.wso2.msf4j.Interceptor";serviceCount="1",
+            osgi.service;objectClass="org.wso2.msf4j.Microservice";serviceCount="17"
+        </carbon.component>
     </properties>
 
 </project>
