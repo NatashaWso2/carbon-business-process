@@ -28,43 +28,30 @@ if (request.isSecure()) {//check whether the request is secure or not
             response.sendRedirect("login?requestUrl=" + request.getRequestURI() + "%3F" + request.getQueryString());
         	}
 	} else {
-
 		var update = request.getParameter("update");
 		var option = request.getParameter("option");
-
 		include("/model/reportModel.jag");
-
 		var select = request.getParameter("select");
 
-		if(update != null && update === "true"){
-			if( option === "userperformance"){
+		if (update != null && update === "true") {
+			if ( option === "userperformance") {
 				response.content = userTasksOverMonths;
-			}
-			else if( option === "taskduration"){
+			} else if ( option === "taskduration") {
 				response.content = avgTaskForProcess;
-			}
-			else if( option === "avgprocessduration"){
+			} else if ( option === "avgprocessduration") {
 				response.content = processAvgTimeChart;
-			}
-			else if(option === "processinstancecount"){
+			} else if (option === "processinstancecount") {
             	response.content = processChart;
-            }
-            else if(option === "uservstaskscompleted"){
+            } else if (option === "uservstaskscompleted") {
             	response.content = userVsTaskCount;
-            }
-            else if(option === "uservsavgtime"){
+            } else if (option === "uservsavgtime") {
             	response.content = userAvgTaskTime;
-            }
-            else if(option === "taskvariation"){
+            } else if (option === "taskvariation") {
             	response.content = tasksOverMonths;
-            }
-             else if(option === "processvariation"){
+            } else if (option === "processvariation") {
             	response.content = processesOverMonths;
             }
-
-		}
-
-		else{
+		} else {
 			include("/template/partials/header.jag");
 			include("/template/partials/navigation.jag");
 			include("/template/reportView.jag");

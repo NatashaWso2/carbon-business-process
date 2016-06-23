@@ -19,17 +19,15 @@ var headers = {"Authorization":"Basic " + auth};
 var   isProcessesDeployed = false;
 
 var countOfProcesses = get( httpUrl +"/bpmn/stats/processTaskServices/countOfProcesses" ,null, headers, "json" ).data;
-if(countOfProcesses == 0){
+if (countOfProcesses == 0) {
     isProcessesDeployed = false;
-}
-else{
+} else {
     isProcessesDeployed =true;
 }
 var deployedProcessCount = get( httpUrl +"/bpmn/stats/processTaskServices/deployedProcessCount" ,null, headers, "json" ).data.data;
-
 var processChart = [];
 
-for(var i= 0; i < deployedProcessCount.length; i++){
+for (var i= 0; i < deployedProcessCount.length; i++) {
     var processDefinitionId = deployedProcessCount[i].processDefinitionId;
     var processCount = deployedProcessCount[i].deployedProcessCount;
     processChart.push([processDefinitionId, processCount]);
@@ -37,7 +35,7 @@ for(var i= 0; i < deployedProcessCount.length; i++){
 
 var processStatusCount = get( httpUrl +"/bpmn/stats/processTaskServices/processStatusCount" ,null, headers, "json" ).data.data;
 var processStatusChart = [];
-for(var i= 0; i < processStatusCount.length; i++){
+for (var i= 0; i < processStatusCount.length; i++) {
     var status = processStatusCount[i].statusOfProcessOrTask;
     var processCount = processStatusCount[i].count;
     processStatusChart.push([status, processCount]);
@@ -45,13 +43,11 @@ for(var i= 0; i < processStatusCount.length; i++){
 
 var taskStatusCount = get( httpUrl +"/bpmn/stats/processTaskServices/taskStatusCount" ,null, headers, "json" ).data.data;
 var taskStatusChart = [];
-for(var i= 0; i < taskStatusCount.length; i++){
+for (var i= 0; i < taskStatusCount.length; i++) {
     var status = taskStatusCount[i].statusOfProcessOrTask;
     var processCount = taskStatusCount[i].count;
     taskStatusChart.push([status, processCount]);
 }
-
-
 //Set current active view as stats view.
 //This is used to highlight current view which the user currently viewing in the navigation bar
 dashboardNavActive = 'class="active"';

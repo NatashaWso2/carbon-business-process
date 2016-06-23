@@ -30,35 +30,30 @@
           //pagination stuff
           var pager = { currentPage: 0, countPages: 0, pageSize: 25 };
            <% for(var j = 0; j < processChart.length; j++){ %>
-
                 dataArrForProcess.push(['<%=processChart[j][0]%>',<%=processChart[j][1]%>]);
+           <% } %>
 
-              <% } %>
-
-          function drawChart(){
+          function drawChart() {
             chartData = google.visualization.arrayToDataTable(dataArrForProcess);
             var max=0;
             var count=0;
 
-            for(var i=0; i<dataArrForProcess.length;i++){
+            for (var i=0; i<dataArrForProcess.length;i++) {
               if (dataArrForProcess[i][1] > max) {
                 max = dataArrForProcess[i][1];
               }
 
-             if(dataArrForProcess[i][1]>0){
+              if (dataArrForProcess[i][1] > 0) {
                 count++;
               }
             }
 
-
-           if(max >= 100 && count > 1){
-              var hTitle='Process instance count (log scale)';
-              var logScaleEnabled = true;
-            }
-
-            else{
-              var hTitle='Process instance count';
-              var logScaleEnabled = false;
+            if (max >= 100 && count > 1) {
+                var hTitle='Process instance count (log scale)';
+                var logScaleEnabled = true;
+            } else {
+                var hTitle='Process instance count';
+                var logScaleEnabled = false;
             }
            var dataSize = pager.pageSize;
            if (dataSize > chartData.getNumberOfRows()) {
@@ -114,26 +109,24 @@
       google.setOnLoadCallback(drawChart);
       var dataArr = [['Process State', 'Instance count']];
        
-           <% for(var j = 0; j < processStatusChart.length; j++){ %>
+           <% for (var j = 0; j < processStatusChart.length; j++) { %>
                 dataArr.push(['<%=processStatusChart[j][0]%>',<%=processStatusChart[j][1]%>]);
-              <%  } %>
+           <%  } %>
 
-      function drawChart() {
-         var data = google.visualization.arrayToDataTable(dataArr);
-   
-
-        var options = {
-          pieHole: 0.6,
-          pieSliceTextStyle: {
-            color: 'white'
-          },
-          colors:['#be2d28','#dddddd','#afaeae','#333'],
-          sliceVisibilityThreshold: 0
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable(dataArr);
+            var options = {
+              pieHole: 0.6,
+              pieSliceTextStyle: {
+                color: 'white'
+              },
+              colors:['#be2d28','#dddddd','#afaeae','#333'],
+              sliceVisibilityThreshold: 0
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('processInstanceChart'));
         chart.draw(data, options);
-      }
+        }
     </script>
 
       <div class="col-lg-4 float-left">
@@ -150,25 +143,22 @@
        
            <% for(var j = 0; j < taskStatusChart.length; j++){ %>
                 dataArrTasks.push(['<%=taskStatusChart[j][0]%>',<%=taskStatusChart[j][1]%>]);
-              <%  } %>
+           <%  } %>
 
-      function drawChart() {
-       var data = google.visualization.arrayToDataTable(dataArrTasks);
-      
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable(dataArrTasks);
+            var options = {
+                pieHole: 0.6,
+                pieSliceTextStyle: {
+                    color: 'white'
+                },
+                colors:['#be2d28','#dddddd','#afaeae','#333'],
+                sliceVisibilityThreshold: 0
+            };
 
-
-        var options = {
-          pieHole: 0.6,
-          pieSliceTextStyle: {
-            color: 'white'
-          },
-          colors:['#be2d28','#dddddd','#afaeae','#333'],
-          sliceVisibilityThreshold: 0
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('taskInstancesChart'));
-        chart.draw(data, options);
-      }
+            var chart = new google.visualization.PieChart(document.getElementById('taskInstancesChart'));
+            chart.draw(data, options);
+        }
     </script>
 
           <div class="row" name="TaskInstancesChart">

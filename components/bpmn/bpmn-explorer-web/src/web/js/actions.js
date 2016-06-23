@@ -489,11 +489,9 @@ function selectProcessForChart() {
                 var dataArr = [['Task Key', 'Avg Duration']];
                 for (var i = 0; i < data.length; i++) {
                     dataArr.push([data[i][0], data[i][1]]);
-
                 }
 
                 var data = google.visualization.arrayToDataTable(dataArr);
-
                 var options = {
                     title: x,
                     pieHole: 0.6,
@@ -849,7 +847,6 @@ function taskVariationOverTime() {
             var array = eval('(' + data + ')');
             google.load("visualization", "1", {packages: ["corechart"]});
             google.setOnLoadCallback(drawChart(array));
-
 
             function drawChart(data) {
                 var dataArr = [['Months', 'Tasks Started', 'Tasks Completed']];
